@@ -28,7 +28,6 @@ import {
   Shield,
 } from "lucide-react"
 import Link from "next/link"
-import { useLanguage } from "@/contexts/language-context"
 
 interface FormData {
   // Step 1: Personal Information
@@ -102,7 +101,6 @@ const initialFormData: FormData = {
 }
 
 export default function RegisterPage() {
-  const { t, isRTL } = useLanguage()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [showPassword, setShowPassword] = useState(false)
@@ -120,7 +118,7 @@ export default function RegisterPage() {
     setFormData((prev) => ({
       ...prev,
       [parent]: {
-        ...prev[parent as keyof FormData],
+        ...(prev[parent as keyof FormData] as any),
         [field]: value,
       },
     }))
@@ -223,56 +221,53 @@ export default function RegisterPage() {
   const steps = [
     {
       id: 1,
-      title: t("personalInfo"),
-      description: t("personalInfoDesc"),
+      title: "Informations personnelles",
+      description: "Vos données personnelles",
       icon: User,
     },
     {
       id: 2,
-      title: t("contactInfo"),
-      description: t("contactInfoDesc"),
+      title: "Informations de contact",
+      description: "Vos coordonnées",
       icon: Phone,
     },
     {
       id: 3,
-      title: t("addresses"),
-      description: t("addressesDesc"),
+      title: "Adresses",
+      description: "Adresse professionnelle et domicile",
       icon: MapPin,
     },
     {
       id: 4,
-      title: t("professionalInfo"),
-      description: t("professionalInfoDesc"),
+      title: "Informations professionnelles",
+      description: "Votre parcours professionnel",
       icon: GraduationCap,
     },
     {
       id: 5,
-      title: t("userAccount"),
-      description: t("userAccountDesc"),
+      title: "Compte utilisateur",
+      description: "Création de votre compte",
       icon: UserCheck,
     },
   ]
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 flex items-center justify-center p-4"
-      dir={isRTL ? "rtl" : "ltr"}
-    >
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("registerCRAO")}</h1>
-          <p className="text-gray-600">{t("createAccountDesc")}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Inscription CRAO</h1>
+          <p className="text-gray-600">Créez votre compte pour accéder à votre espace personnel</p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-medium text-gray-700">
-              {t("step")} {currentStep} {isRTL ? "من" : "sur"} 5
+              Étape {currentStep} sur 5
             </span>
             <span className="text-sm font-medium text-gray-700">
-              {Math.round(progress)}% {t("completed")}
+              {Math.round(progress)}% terminé
             </span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -289,7 +284,7 @@ export default function RegisterPage() {
             return (
               <div
                 key={step.id}
-                className={`flex flex-col items-center min-w-0 flex-1 ${index < steps.length - 1 ? (isRTL ? "ml-4" : "mr-4") : ""}`}
+                className={`flex flex-col items-center min-w-0 flex-1 ${index < steps.length - 1 ? "mr-4" : ""}`}
               >
                 <button
                   onClick={() => isAccessible && setCurrentStep(step.id)}
@@ -324,7 +319,7 @@ export default function RegisterPage() {
         {/* Form Content */}
         <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}>
+            <CardTitle className="flex items-center gap-2">
               {React.createElement(steps[currentStep - 1].icon, { className: "h-5 w-5" })}
               {steps[currentStep - 1].title}
             </CardTitle>
@@ -336,59 +331,59 @@ export default function RegisterPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="civilite">{t("civility")} *</Label>
+                    <Label htmlFor="civilite">Civilité *</Label>
                     <Select value={formData.civilite} onValueChange={(value) => updateFormData("civilite", value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder={isRTL ? "اختر لقبك" : "Sélectionnez votre civilité"} />
+                        <SelectValue placeholder="Sélectionnez votre civilité" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="M.">{isRTL ? "السيد" : "Monsieur"}</SelectItem>
-                        <SelectItem value="Mme">{isRTL ? "السيدة" : "Madame"}</SelectItem>
-                        <SelectItem value="Mlle">{isRTL ? "الآنسة" : "Mademoiselle"}</SelectItem>
+                        <SelectItem value="M.">Monsieur</SelectItem>
+                        <SelectItem value="Mme">Madame</SelectItem>
+                        <SelectItem value="Mlle">Mademoiselle</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="cin">{t("cin")} *</Label>
+                    <Label htmlFor="cin">CIN *</Label>
                     <Input
                       id="cin"
                       value={formData.cin}
                       onChange={(e) => updateFormData("cin", e.target.value)}
-                      placeholder={isRTL ? "رقم بطاقة الهوية" : "Numéro de carte d'identité"}
+                      placeholder="Numéro de carte d'identité"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="nom">{t("lastName")} *</Label>
+                    <Label htmlFor="nom">Nom de famille *</Label>
                     <Input
                       id="nom"
                       value={formData.nom}
                       onChange={(e) => updateFormData("nom", e.target.value)}
-                      placeholder={isRTL ? "اسم العائلة" : "Votre nom de famille"}
+                      placeholder="Votre nom de famille"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="prenom">{t("firstName")} *</Label>
+                    <Label htmlFor="prenom">Prénom *</Label>
                     <Input
                       id="prenom"
                       value={formData.prenom}
                       onChange={(e) => updateFormData("prenom", e.target.value)}
-                      placeholder={isRTL ? "اسمك الأول" : "Votre prénom"}
+                      placeholder="Votre prénom"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label>{t("birthDate")} *</Label>
+                  <Label>Date de naissance *</Label>
                   <div className="grid grid-cols-3 gap-2 mt-1">
                     <Select
                       value={formData.dateNaissance.jour}
                       onValueChange={(value) => updateNestedFormData("dateNaissance", "jour", value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={isRTL ? "اليوم" : "Jour"} />
+                        <SelectValue placeholder="Jour" />
                       </SelectTrigger>
                       <SelectContent>
                         {days.map((day) => (
@@ -403,7 +398,7 @@ export default function RegisterPage() {
                       onValueChange={(value) => updateNestedFormData("dateNaissance", "mois", value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={isRTL ? "الشهر" : "Mois"} />
+                        <SelectValue placeholder="Mois" />
                       </SelectTrigger>
                       <SelectContent>
                         {months.map((month) => (
@@ -418,7 +413,7 @@ export default function RegisterPage() {
                       onValueChange={(value) => updateNestedFormData("dateNaissance", "annee", value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={isRTL ? "السنة" : "Année"} />
+                        <SelectValue placeholder="Année" />
                       </SelectTrigger>
                       <SelectContent>
                         {years.map((year) => (
@@ -810,10 +805,10 @@ export default function RegisterPage() {
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className={`flex items-center gap-2 bg-transparent ${isRTL ? "flex-row-reverse" : ""}`}
+                className="flex items-center gap-2 bg-transparent"
               >
                 <ChevronLeft className="h-4 w-4" />
-                {t("previous")}
+                Précédent
               </Button>
 
               <div className="flex gap-2">
@@ -821,26 +816,26 @@ export default function RegisterPage() {
                   <Button
                     onClick={nextStep}
                     disabled={!validateStep(currentStep)}
-                    className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                    className="flex items-center gap-2"
                   >
-                    {t("next")}
+                    Suivant
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 ) : (
                   <Button
                     onClick={handleSubmit}
                     disabled={!validateStep(5) || isSubmitting}
-                    className={`flex items-center gap-2 ${isRTL ? "flex-row-reverse" : ""}`}
+                    className="flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        {t("registrationInProgress")}
+                        Inscription en cours...
                       </>
                     ) : (
                       <>
                         <Shield className="h-4 w-4" />
-                        {t("finalizeRegistration")}
+                        Finaliser l'inscription
                       </>
                     )}
                   </Button>
@@ -853,9 +848,9 @@ export default function RegisterPage() {
         {/* Footer */}
         <div className="text-center mt-8">
           <p className="text-gray-600">
-            {t("alreadyHaveAccount")}{" "}
+            Vous avez déjà un compte ?{" "}
             <Link href="/login" className="text-blue-600 hover:underline font-medium">
-              {t("login")}
+              Se connecter
             </Link>
           </p>
         </div>
